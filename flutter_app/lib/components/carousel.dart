@@ -5,9 +5,10 @@ import 'package:flutter_app/models/event.dart';
 import 'package:flutter_app/screens/eventinfo.dart';
 
 class Carousel extends StatefulWidget {
-  const Carousel({super.key, required this.title});
+  const Carousel({super.key, required this.title, required this.number});
 
   final String title;
+  final int number;
 
   @override
   State<Carousel> createState() => _CarouselState();
@@ -15,8 +16,17 @@ class Carousel extends StatefulWidget {
 
 class _CarouselState extends State<Carousel> {
 
-  Future<QuerySnapshot> retrieveEvent() async {
-    var document = await FirebaseFirestore.instance.collection('events').limit(15).get();
+  Future<QuerySnapshot> retrieveEvent(int number) async {
+    var document;
+    if(number == 0){
+      document = await FirebaseFirestore.instance.collection('events').limit(15).get();
+    }else if(number == 1){
+      var doc = await FirebaseFirestore.instance.collection('events').doc("event111").get();
+      document = await FirebaseFirestore.instance.collection('events').startAfterDocument(doc).limit(15).get();
+    }else{
+      var doc = await FirebaseFirestore.instance.collection('events').doc("event125").get();
+      document = await FirebaseFirestore.instance.collection('events').startAfterDocument(doc).limit(15).get();
+    }
     return document;
   }
 
@@ -63,7 +73,7 @@ class _CarouselState extends State<Carousel> {
         ),
         FutureBuilder(
           future:
-            retrieveEvent(),
+            retrieveEvent(widget.number),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasData) {
               var snap = snapshot.data;

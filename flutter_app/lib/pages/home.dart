@@ -31,7 +31,9 @@ class _HomePageState extends State<HomePage> {
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           children: const <Widget> [
-            Carousel(title: 'Eventos destacados',),
+            Carousel(title: 'Eventos destacados', number: 0),
+            Carousel(title: 'Categoria 1', number: 1),
+            Carousel(title: 'Categoria 2', number: 2),
           ],
         ),
       ),
