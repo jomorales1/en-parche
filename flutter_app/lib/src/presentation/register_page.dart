@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -17,17 +18,21 @@ class RegisterPage extends StatelessWidget{
     return MaterialApp(
       title: 'Registro',
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Center(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Image.asset('assets/images/logo.PNG'),
+                const SizedBox(height: 60.0),
                 Container(
                   child: TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     controller: _emailController,
                     style: const TextStyle(fontSize: 20),
                     decoration: const InputDecoration(
-                        hintText: "Ingrese el correo"
+                        hintText: "Ingrese el correo",
+                        prefixIcon: Icon(Icons.mail, color: Colors.black,)
                     ),
                   ),
                 ),
@@ -39,7 +44,7 @@ class RegisterPage extends StatelessWidget{
                     style: const TextStyle(fontSize: 20),
                     decoration: const InputDecoration(
                         hintText: "Ingrese el nombre",
-                        prefixIcon: Icon(Icons.mail, color: Colors.black,)
+                        prefixIcon: Icon(Icons.person, color: Colors.black,)
                     ),
                   ),
                 ),
@@ -63,14 +68,25 @@ class RegisterPage extends StatelessWidget{
                         borderRadius: BorderRadius.circular(12.0)
                     ),
                       onPressed: () async {
+                    if(_nameController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty){
+                      Fluttertoast.showToast(msg: "Debe diligenciar todos los campos",
+                          gravity: ToastGravity.BOTTOM);
+                      return;
+                    }
+
                     await _signUp(
                     name: _nameController.text,
                     email: _emailController.text,
                     password: _passwordController.text
                     );
+                    Fluttertoast.showToast(msg: "Usuario creado",
+                    gravity: ToastGravity.BOTTOM);
                     Navigator.pop(context);
                     },
-                    child: Text("Registrarse")
+                    child: const Text("Registrarse", style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0
+                    ),)
               )
         ]
           ),

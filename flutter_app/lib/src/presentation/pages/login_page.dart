@@ -1,14 +1,22 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/screens/mainscreen.dart';
 import 'package:flutter_app/src/presentation/register_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+// class LoginStatefulWidget extends StatefulWidget{
+//   const LoginStatefulWidget({Key? key}) : super(key: key);
+//
+//   @override
+//   State<LoginStatefulWidget> createState() => LoginPage();
+// }
 
 class LoginPage extends StatelessWidget{
-
   final email = TextEditingController();
   final password = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +29,14 @@ class LoginPage extends StatelessWidget{
       home: Scaffold(
         // appBar: AppBar(
         // ),
+        resizeToAvoidBottomInset: false,
         body: Center(
             child: Column(
+
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Image(image: image)
+                Image.asset('assets/images/logo.PNG'),
+                const SizedBox(height: 60.0),
                 Container(
                     child: TextFormField(
                       keyboardType: TextInputType.emailAddress,
@@ -36,7 +47,7 @@ class LoginPage extends StatelessWidget{
                         prefixIcon: Icon(Icons.mail, color: Colors.black,)
                       ),
                       validator: (value){
-                        if(value == null || value.isEmpty) return 'Ingrese el usuario';
+                        if(value!.isEmpty) return 'Ingrese el usuario';
                       },
                     ),
                 ),
@@ -71,12 +82,12 @@ class LoginPage extends StatelessWidget{
       UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);    user = userCredential.user;
       print("sirviooo");
     }on FirebaseAuthException catch(e){
-      print(e);
       if(e.code == "user-not-found") {
         print("autenticacion fallo");
       }
     }
   }
+
 }
 
 class loginWidget extends StatelessWidget{
@@ -117,11 +128,22 @@ class goToMain extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.0)
         ),
         onPressed: () async {
-          await login(
+          // if(_emailController.text.isEmpty || _passwordController.text.isEmpty){
+          //   Fluttertoast.showToast(msg: "Todos los campos son obligatorios;",
+          //       gravity: ToastGravity.BOTTOM);
+          //   return;
+          // }
+
+          bool? isLogged = await login(
               email: _emailController.text, password: _passwordController.text);
           // ignore: use_build_context_synchronously
-          print("?????");
           Navigator.push(context, MaterialPageRoute( builder: (context) => Mainscreen()));
+          if(isLogged != null && isLogged){
+            Navigator.push(context, MaterialPageRoute( builder: (context) => Mainscreen()));
+          }else{
+            Fluttertoast.showToast(msg: "Usuario no encontrado, debe registrarse",
+            gravity: ToastGravity.BOTTOM);
+          }
         },
         child: const Text("Ingresar",
           style: TextStyle(
@@ -131,17 +153,23 @@ class goToMain extends StatelessWidget {
     );
   }
 
-  static Future<User?> login({required String email, required String password})  async{
+  static Future<bool?> login({required String email, required String password})  async{
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
+    print(email);
+    print(password);
     try{
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);    user = userCredential.user;
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
+      user = userCredential.user;
       print("sirviooo");
+      return true;
     }on FirebaseAuthException catch(e){
       print(e);
       if(e.code == "user-not-found") {
         print("autenticacion fallo");
       }
+      return false;
+
     }
   }
 }
