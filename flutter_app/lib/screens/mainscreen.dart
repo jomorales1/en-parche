@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/pages/EditProfile.dart';
 import 'package:flutter_app/pages/home.dart';
 import 'package:animations/animations.dart';
 
@@ -41,7 +42,7 @@ class _MainScreenState extends State<Mainscreen> {
     {
       'title': 'Profile',
       'icon': Icons.person,
-      'page': const AuxPage(),
+      'page': const EditProfileStateful(),
       'index': 4,
     },
   ];

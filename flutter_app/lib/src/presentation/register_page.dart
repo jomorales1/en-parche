@@ -7,21 +7,40 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class RegisterPage extends StatelessWidget{
+class RegisterPageSateful extends StatefulWidget {
+  const RegisterPageSateful({super.key});
+
+  @override
+  State<RegisterPageSateful> createState() => RegisterPage();
+}
+
+class RegisterPage extends State<RegisterPageSateful>{
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose(){
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    TextEditingController _nameController = TextEditingController();
-    TextEditingController _emailController = TextEditingController();
-    TextEditingController _passwordController = TextEditingController();
 
     return MaterialApp(
       title: 'Registro',
       home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+
+         resizeToAvoidBottomInset: false,
+
+          body: Center(
+          child: ListView(
+
+              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset('assets/images/logo.PNG'),
                 const SizedBox(height: 60.0),

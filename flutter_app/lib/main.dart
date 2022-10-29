@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/services_provider.dart';
 import 'package:flutter_app/src/presentation/pages/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +13,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform
   );
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  runApp(LoginPage());
+  // runApp(LoginPage());
+  init();
+  await getIt.allReady();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,7 +30,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoginPageStateful()
+      },
     );
   }
 }
@@ -63,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () { Navigator.push(context,  MaterialPageRoute( builder: (context) => Mainscreen())); },
               child: const Text('Login', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50),),
             ),
+
           ],
         ),
       )
