@@ -3,6 +3,7 @@ import 'package:flutter_app/pages/home.dart';
 import 'package:animations/animations.dart';
 
 import '../pages/auxiliar.dart';
+import '../pages/new_event.dart';
 
 class Mainscreen extends StatefulWidget {
   @override
@@ -29,7 +30,7 @@ class _MainScreenState extends State<Mainscreen> {
     {
       'title': 'Add',
       'icon': Icons.add_box,
-      'page': const AuxPage(),
+      'page': const newEventPage(),
       'index': 2,
     },
     {
