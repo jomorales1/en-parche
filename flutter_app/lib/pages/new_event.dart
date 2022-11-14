@@ -1,8 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/event.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../screens/eventinfo.dart';
 
 // ignore: camel_case_types
 class   newEventPage extends StatefulWidget {
@@ -25,6 +31,8 @@ class newEventPageState extends State<newEventPage> {
 
   PickedFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
+
+  FirebaseStorage storage = FirebaseStorage.instance;
 
   @override
   void initState() {
@@ -189,17 +197,49 @@ class newEventPageState extends State<newEventPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: TextButton(
-                  onPressed: () {
+                padding: const EdgeInsets.only(top: 5.0, bottom: 20.0, right: 20.0, left: 60.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
+
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      print(titleInput.text);
-                      print(dateInput.text);
-                      print(startTimeInput.text);
-                      print("Validado");
+                      String downloadUrl, imageName;
+                      if(_imageFile == null){
+                        downloadUrl = "https://firebasestorage.googleapis.com/v0/b/en-parche.appspot.com/o/logo.PNG?alt=media&token=0c0cb54a-6eff-44ec-8d55-c0273ee141ce";
+                        imageName = "noImage";
+                      }else{
+                        imageName = _imageFile!.path.split("/")[6];
+                        File imageFile = File(_imageFile!.path);
+                        var _task = await storage.ref().child(imageName).putFile(imageFile);
+                        downloadUrl = await _task.ref.getDownloadURL();
+                      }
+
+
+                      Map<String, dynamic> getDataMap() {
+                        return {
+                          "title": titleInput.text,
+                          "start_time": startTimeInput.text,
+                          "place": placeInput.text,
+                          "organizer": organizerInput.text,
+                          "description": descriptionInput.text,
+                          "event_date": dateInput.text,
+                          "image_url": downloadUrl,
+                          "image_name": imageName,
+                        };
+                      }
+                      String docName = "${titleInput.text} - ${dateInput.text}";
+
+                      FirebaseFirestore.instance.collection('events').doc(docName).set(getDataMap());
+
+                      var document = await FirebaseFirestore.instance.collection('events').doc(docName).get();
+                      EventModel event = EventModel.fromJson(document.data()!);
+                      Navigator.push(context, MaterialPageRoute( builder: (context) => EventInfo(event: event)));
                     }
                   },
-                  child: Text('Submit'),
+                  child: Text('Crear'),
                 ),
               ),
             ],
