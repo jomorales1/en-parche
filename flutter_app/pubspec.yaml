@@ -50,6 +50,10 @@ dependencies:
   dartz: ^0.10.1
   flutter_signin_button: ^2.0.0
   google_sign_in: ^5.4.2
+  intl: ^0.17.0
+  image_picker: ^0.8.6
+  firebase_storage: ^11.0.5
+
 
 dev_dependencies:
   flutter_test:
