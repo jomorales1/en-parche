@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/mainscreen.dart';
 import 'package:flutter_app/services_provider.dart';
 import 'package:flutter_app/src/presentation/register_page.dart';
+import 'package:flutter_signin_button/button_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 class LoginPageStateful extends StatefulWidget{
   const LoginPageStateful({super.key});
@@ -35,9 +38,7 @@ class LoginPage extends State<LoginPageStateful>{
       home: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Center(
-            child: Column(
-
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: ListView(
               children: [
                 Image.asset('assets/images/logo.PNG'),
                 const SizedBox(height: 60.0),
@@ -93,7 +94,20 @@ class LoginPage extends State<LoginPageStateful>{
                           fontSize: 18.0
                       ),)
             ),
-                loginWidget()
+                loginWidget(),
+                SignInButton(
+                    Buttons.Google,
+                    text: "Ingresar con Google",
+                    onPressed: () async {
+                      bool? isLoggedWithGoogle = await logInWithGoogle();
+                      if(isLoggedWithGoogle){
+                        Navigator.push(context, MaterialPageRoute( builder: (context) => Mainscreen()));
+                      }else{
+                        Fluttertoast.showToast(msg: "Usuario no encontrado, debe registrarse",
+                            gravity: ToastGravity.BOTTOM);
+                      }
+                    }
+                )
               ],
             )
         ),
@@ -125,6 +139,49 @@ class LoginPage extends State<LoginPageStateful>{
       return false;
 
     }
+  }
+
+  static Future<bool> logInWithGoogle() async{
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user;
+    String email = "";
+    SharedPreferences preferences = getIt();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+
+    if(googleSignInAccount != null){
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+
+      final AuthCredential authCredential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken:  googleSignInAuthentication.idToken
+      );
+
+      try{
+        final UserCredential userCredential = await auth.signInWithCredential(authCredential);
+
+        user = userCredential.user;
+        if(user?.email != null){
+          email = user?.email ?? "";
+        }
+        preferences.setString("email", email);
+        return true;
+      } on FirebaseAuthException catch(e){
+        if (e.code == 'account-exists-with-different-credential') {
+          // handle the error here
+        }
+        else if (e.code == 'invalid-credential') {
+          // handle the error here
+        }
+      } catch (e) {
+        // handle the error here
+      }
+
+    }
+
+
+    return false;
   }
 
 
