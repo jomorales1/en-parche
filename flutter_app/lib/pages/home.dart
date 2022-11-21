@@ -15,7 +15,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     Firebase.initializeApp().whenComplete(() {
-      print("completed initialization");
       setState(() {});
     });
   }
@@ -24,16 +23,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text("Inicio"),
       ),
       body: Container(
         child: ListView(
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           children: const <Widget> [
-            Carousel(title: 'Eventos destacados', number: 0),
-            Carousel(title: 'Categoria 1', number: 1),
-            Carousel(title: 'Categoria 2', number: 2),
+            Carousel(title: 'Eventos hoy', number: 0),
+            Carousel(title: 'Durante el almuerzo', number: 1),
+            Carousel(title: 'Facultad de ingeniería', number: 2),
+            Carousel(title: 'Otros', number: 3),
           ],
         ),
       ),

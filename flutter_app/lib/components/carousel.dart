@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/event.dart';
 import 'package:flutter_app/screens/eventinfo.dart';
+import 'package:intl/intl.dart';
 
 class Carousel extends StatefulWidget {
   const Carousel({super.key, required this.title, required this.number});
@@ -17,15 +18,17 @@ class Carousel extends StatefulWidget {
 class _CarouselState extends State<Carousel> {
 
   Future<QuerySnapshot> retrieveEvent(int number) async {
-    var document;
+    QuerySnapshot<Map<String, dynamic>> document;
+    String date = DateFormat("yyyy-MM-dd").format(DateTime.now());
+
     if(number == 0){
-      document = await FirebaseFirestore.instance.collection('events').limit(15).get();
+      document = await FirebaseFirestore.instance.collection('events').where("event_date", isEqualTo: date).get();
     }else if(number == 1){
-      var doc = await FirebaseFirestore.instance.collection('events').doc("event111").get();
-      document = await FirebaseFirestore.instance.collection('events').startAfterDocument(doc).limit(15).get();
+      document = await FirebaseFirestore.instance.collection('events').where("start_time", isEqualTo: "13:00").get();
+    }else if(number == 2){
+      document = await FirebaseFirestore.instance.collection('events').where("organizer", isEqualTo: "Facultad de Ingeniería").get();
     }else{
-      var doc = await FirebaseFirestore.instance.collection('events').doc("event125").get();
-      document = await FirebaseFirestore.instance.collection('events').startAfterDocument(doc).limit(15).get();
+      document = await FirebaseFirestore.instance.collection('events').limit(15).get();
     }
     return document;
   }
@@ -48,12 +51,15 @@ class _CarouselState extends State<Carousel> {
               Image.network(
                 event.image_url!,
               ),
-              Center(
-                child: Text(
-                  event.event_date!,
-                  style: const TextStyle(fontSize: 20,fontWeight: FontWeight.normal, color: Colors.white, backgroundColor: Colors.black),
-                ),
-              ),
+              Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      event.title!,
+                      style: const TextStyle(fontSize: 17,fontWeight: FontWeight.bold, color: Colors.white, backgroundColor: Colors.black),
+                    ),
+                )
+              )
             ]
         ),
     );
