@@ -63,6 +63,7 @@ class _CarouselState extends State<Carousel> {
   Widget build(BuildContext context) {
     return ListView(
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(20),
       children: <Widget>[
         Text(
