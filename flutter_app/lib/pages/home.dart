@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/carousel.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_app/components/news_carousel.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,6 +35,7 @@ class _HomePageState extends State<HomePage> {
             Carousel(title: 'Durante el almuerzo', number: 1),
             Carousel(title: 'Facultad de ingeniería', number: 2),
             Carousel(title: 'Otros', number: 3),
+            CarouselNews(title: 'Noticias')
           ],
         ),
       ),
