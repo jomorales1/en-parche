@@ -44,7 +44,7 @@ class newEventPageState extends State<newEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Add"),
+          title: const Text("Añadir"),
         ),
       body: Form(
           key: _formKey,

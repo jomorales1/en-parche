@@ -3,6 +3,7 @@ import 'package:flutter_app/pages/EditProfile.dart';
 import 'package:flutter_app/pages/home.dart';
 import 'package:flutter_app/pages/calendar.dart';
 import 'package:animations/animations.dart';
+import 'package:flutter_app/pages/search.dart';
 
 import '../pages/auxiliar.dart';
 import '../pages/new_event.dart';
@@ -24,9 +25,9 @@ class _MainScreenState extends State<Mainscreen> {
       'index': 0,
     },
     {
-      'title': 'Discover',
-      'icon': Icons.map,
-      'page': const AuxPage(),
+      'title': 'Search',
+      'icon': Icons.search,
+      'page': const SearchPage(),
       'index': 1,
     },
     {

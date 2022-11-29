@@ -1,8 +1,12 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/services_provider.dart';
+import 'package:flutter_app/src/domain/entities/User.dart';
 import 'package:flutter_app/src/presentation/pages/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:flutter_app/pages/home.dart';
 import 'package:flutter_app/screens/mainscreen.dart';
@@ -13,11 +17,37 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform
   );
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    provisional: false,
+    sound: true,
+  );
+
+  AwesomeNotifications().initialize(
+      '',
+      [
+        NotificationChannel(
+          channelGroupKey: 'basic_test',
+          channelKey: 'basic',
+          channelName: 'Basic notifications',
+          channelDescription: 'Notification channel for basic tests',
+          channelShowBadge: true,
+          importance: NotificationImportance.High,
+          enableVibration: true,
+        ),
+      ]
+  );
+
+
   // runApp(LoginPage());
   init();
   await getIt.allReady();
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -32,7 +62,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => LoginPageStateful()
+        '/': (context) => const LoginPageStateful()
       },
     );
   }
