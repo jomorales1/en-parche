@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/pages/Friends.dart';
 import 'package:flutter_app/services_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -85,6 +86,20 @@ class EditProfile extends State<EditProfileStateful> {
                       color: Colors.white,
                       fontSize: 18.0
                   ),)
+              ),
+              const SizedBox(height: 26.0),
+              RawMaterialButton(
+                  fillColor: Color(0xFF0069FE),
+                  elevation: 0.0,
+                  padding: EdgeInsets.symmetric(vertical: 20.0),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0)
+                  ),
+
+                  onPressed: (){
+                    Navigator.push(context, MaterialPageRoute( builder: (context) => const FriendsStateful()));
+                  },
+                  child: const Text("amigos")
               )
 
             ]
@@ -111,7 +126,6 @@ class EditProfile extends State<EditProfileStateful> {
 
   _updateUser(String email, String name) async {
 
-    print(email);
     final Map<String, Object> params = {
       "name": name,
       "email": email
