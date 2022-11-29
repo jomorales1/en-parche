@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/EditProfile.dart';
 import 'package:flutter_app/pages/home.dart';
+import 'package:flutter_app/pages/calendar.dart';
 import 'package:animations/animations.dart';
 
 import '../pages/auxiliar.dart';
@@ -37,7 +38,7 @@ class _MainScreenState extends State<Mainscreen> {
     {
       'title': 'Calendar',
       'icon': Icons.calendar_month,
-      'page': const AuxPage(),
+      'page': const CalendarPage(),
       'index': 3,
     },
     {

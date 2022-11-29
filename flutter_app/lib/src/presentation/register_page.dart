@@ -131,7 +131,8 @@ class RegisterPage extends State<RegisterPageSateful>{
   Future<void> uploadUser({required String name, required String mail}) async{
     await FirebaseFirestore.instance.collection("users").add({
       'name': name,
-      'email': mail
+      'email': mail,
+      'events': []
     });
     print("usuario agregado");
   }
