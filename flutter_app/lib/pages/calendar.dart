@@ -15,34 +15,31 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  String? _eventTitle,
-      _eventDate,
-      _eventStartTime,
+  String? _eventStartTime,
       _eventEndTime,
-      _eventPlace,
-      _eventOrganizer,
-      _eventDescription,
-      _eventImage,
       _timeDetails,
       _subjectText,
-      _dateText;
+      _dateText,
+      _eventTitle,
+      _eventDate,
+      _eventPlace,
+      _option;
 
   @override
   void initState() {
-    _eventTitle = '';
-    _eventDate = '';
     _eventStartTime = '';
-    _eventPlace = '';
-    _eventOrganizer = '';
-    _eventDescription = '';
-    _eventImage = '';
+    _eventEndTime = '';
     _timeDetails = '';
     _subjectText = '';
     _dateText = '';
-    super.initState();
+    _eventTitle = '';
+    _eventDate = '';
+    _eventPlace = '';
+    _option = 'month';
     Firebase.initializeApp().whenComplete(() {
       setState(() {});
     });
+    super.initState();
   }
 
   Future<QuerySnapshot> retrieveEvents() async {
@@ -62,6 +59,16 @@ class _CalendarPageState extends State<CalendarPage> {
     return events;
   }
 
+  CalendarView getCalendarOption() {
+    if (_option == 'day') {
+      return CalendarView.day;
+    }
+    if (_option == 'week') {
+      return CalendarView.week;
+    }
+    return CalendarView.month;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +82,12 @@ class _CalendarPageState extends State<CalendarPage> {
               var snap = snapshot.data;
               List docs = snap!.docs;
               return SfCalendar(
-                view: CalendarView.month,
+                allowedViews: const [
+                  CalendarView.month,
+                  CalendarView.week,
+                  CalendarView.day
+                ],
+                view: getCalendarOption(),
                 selectionDecoration: BoxDecoration(
                   color: Colors.transparent,
                   border: Border.all(color: Colors.blue, width: 2),
@@ -89,13 +101,19 @@ class _CalendarPageState extends State<CalendarPage> {
                 firstDayOfWeek: 1,
                 dataSource: getCalendarDataSource(docs),
                 onTap: calendarTapped,
-                monthViewSettings: MonthViewSettings(
+                monthViewSettings: const MonthViewSettings(
                     appointmentDisplayMode:
-                        MonthAppointmentDisplayMode.appointment),
+                        MonthAppointmentDisplayMode.appointment,
+                    showAgenda: true),
               );
             }
             return SfCalendar(
-              view: CalendarView.month,
+              allowedViews: const [
+                CalendarView.month,
+                CalendarView.week,
+                CalendarView.day
+              ],
+              view: getCalendarOption(),
               selectionDecoration: BoxDecoration(
                 color: Colors.transparent,
                 border: Border.all(color: Colors.blue, width: 2),
@@ -108,9 +126,10 @@ class _CalendarPageState extends State<CalendarPage> {
               todayHighlightColor: Colors.blue,
               firstDayOfWeek: 1,
               onTap: calendarTapped,
-              monthViewSettings: MonthViewSettings(
+              monthViewSettings: const MonthViewSettings(
                   appointmentDisplayMode:
-                      MonthAppointmentDisplayMode.appointment),
+                      MonthAppointmentDisplayMode.appointment,
+                  showAgenda: true),
             );
           }),
     );
@@ -133,7 +152,7 @@ class _CalendarPageState extends State<CalendarPage> {
       _eventPlace = appointmentDetails.location;
     } else if (calendarTapDetails.targetElement ==
         CalendarElement.calendarCell) {
-      _subjectText = "You have tapped cell";
+      _subjectText = "Día seleccionado:";
       _dateText = DateFormat('MMMM dd, yyyy')
           .format(calendarTapDetails.date!)
           .toString();
@@ -143,8 +162,8 @@ class _CalendarPageState extends State<CalendarPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Container(child: new Text('$_subjectText')),
-            content: Container(
+            title: Text('$_subjectText'),
+            content: SizedBox(
               height: 80,
               child: Column(
                 children: <Widget>[
@@ -188,14 +207,13 @@ DataSource getCalendarDataSource(var events) {
   final List<Appointment> appointments = <Appointment>[];
   for (var element in events) {
     appointments.add(Appointment(
-        startTime: DateTime.parse(element.docs[0].get("event_date") +
-            " " +
-            element.docs[0].get("start_time")),
-        endTime: DateTime.parse(element.docs[0].get("event_date") +
-                " " +
-                element.docs[0].get("start_time"))
+        startTime: DateTime.parse(
+            element.get("event_date") + " " + element.get("start_time")),
+        endTime: DateTime.parse(
+                element.get("event_date") + " " + element.get("start_time"))
             .add(const Duration(hours: 2, days: -1)),
-        subject: element.docs[0].get("title"),
+        subject: element.get("title"),
+        location: element.get("place"),
         color: Colors.lightBlueAccent));
   }
   return DataSource(appointments);
